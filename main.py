@@ -4,14 +4,17 @@ from os.path import isfile, join
 import csv
 import os
 
+
 def insert_in_a_string(source_str, insert_str, pos):
-    """ Inseri uma string em uma outra string pelo index"""
+    """ Insere uma string em uma outra string pelo index"""
     return source_str[:pos] + insert_str + source_str[pos:]
+
 
 def heading_list_to_text(list_heading):
     """ Tranforma uma lista de strings em uma grande string"""
     text = "".join(list_heading)
     return text
+
 
 def dict_rows(list_heading, list_data):
     """ Cria o dicionario para inclusão dos dados e do header do arquivo csv"""
@@ -23,6 +26,23 @@ def dict_rows(list_heading, list_data):
             dict_row[list_heading[iteration]] = data_row
         list_rows.append(dict_row)
     return list_rows
+
+
+def separate_orgao_matricula(rows_list):
+    """ Cria as colunas de orgao e matricula a partir da coluna GR-MATRICULA"""
+    row_test = rows_list[0]
+    headings_new = []
+    heading_matricula = 'GR-MATRICULA                            N'
+    if heading_matricula in row_test:
+        headings_new.append('ORGAO                                   N')
+        headings_new.append('MATRICULA                               N')
+        for data_row in rows_list:
+            data_row[headings_new[0]] = data_row.get(
+                heading_matricula)[:5]
+            data_row[headings_new[1]] = data_row.get(
+                heading_matricula)[5:]
+    return (headings_new, rows_list)
+
 
 directory = os.getcwd()
 
@@ -77,9 +97,11 @@ for file_name in extrator_files_set:
         lines_csv.append(line)
 
     with open(file_name + ".csv", "w", encoding="utf8", newline="") as result_file:
+        rows = dict_rows(headings, lines_csv)
+        (extend_heading, org_mat_rows) = separate_orgao_matricula(rows)
+        headings[1:1] = extend_heading
         fieldnames = headings
         writer = csv.DictWriter(result_file, fieldnames=fieldnames)
         writer.writeheader()
-        rows = dict_rows(headings, lines_csv)
-        for row in rows:
+        for row in org_mat_rows:
             writer.writerow(row)
