@@ -28,10 +28,10 @@ def separate_orgao_matricula(rows_list):
     """ Cria as colunas de orgao e matricula a partir da coluna GR-MATRICULA"""
     row_test = rows_list[0]
     headings_new = []
-    heading_matricula = 'GR-MATRICULA                            N'
+    heading_matricula = 'GR-MATRICULA'
     if heading_matricula in row_test:
-        headings_new.append('ORGAO                                   N')
-        headings_new.append('MATRICULA                               N')
+        headings_new.append('ORGAO')
+        headings_new.append('MATRICULA')
         for data_row in rows_list:
             data_row[headings_new[0]] = data_row.get(
                 heading_matricula)[:5]
@@ -71,7 +71,7 @@ for file_name in extrator_files_set:
         for line in f:
             char_count = line[-4:]
             chars_count.append(char_count.strip())
-            heading = line[:41]
+            heading = line[:40]
             headings.append(heading.strip())
     lines = []
 
