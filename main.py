@@ -1,17 +1,12 @@
 """ Main module """
 from os import listdir
 from os.path import isfile, join
-import sys
 import csv
-
-onlyfiles = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
-
-name_files = []
+import os
 
 def insert_in_a_string(source_str, insert_str, pos):
     """ Inseri uma string em uma outra string pelo index"""
     return source_str[:pos] + insert_str + source_str[pos:]
-
 
 def heading_list_to_text(list_heading):
     """ Tranforma uma lista de strings em uma grande string"""
@@ -24,10 +19,16 @@ def dict_rows(list_heading, list_data):
     for data_row in list_data:
         data_row_list = data_row[0].split(",")
         dict_row = {}
-        for i, data_row in enumerate(data_row_list):
-            dict_row[list_heading[i]] = data_row
+        for iteration, data_row in enumerate(data_row_list):
+            dict_row[list_heading[iteration]] = data_row
         list_rows.append(dict_row)
     return list_rows
+
+directory = os.getcwd()
+
+onlyfiles = [f for f in listdir(directory) if isfile(join(directory, f))]
+
+name_files = []
 
 for file in onlyfiles:
     full_name_list = file.split(".")
@@ -46,8 +47,8 @@ set_extrator_files = set(extrator_files)
 extrator_files_set = list(set_extrator_files)
 
 for file_name in extrator_files_set:
-    file_REF = sys.path[0]+"\\"+file_name+'.REF'
-    file_TXT = sys.path[0]+"\\"+file_name+'.TXT'
+    file_REF = directory+"\\"+file_name+'.REF'
+    file_TXT = directory+"\\"+file_name+'.TXT'
     chars_count = []
     headings = []
 
