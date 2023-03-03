@@ -12,7 +12,7 @@ Foi utilizado o python 3.10.8.
 ## Executável
 Para gerar o executável foi utilizado o modulo pyinstaller versão 5.0.
 
-Foi executado o commando:
+Foi executado o commando no powershell como administrador:
 ``` Bash
 pyinstaller --onefile --paths .\venv\Lib\site-packages main.py
 ```
