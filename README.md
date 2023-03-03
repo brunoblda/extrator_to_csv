@@ -11,6 +11,7 @@ Os modulos utilizados se encontram no arquivo requerements.txt.
 Foi utilizado o python 3.10.8.
 ## Executável
 Para gerar o executável foi utilizado o modulo pyinstaller versão 5.0.
+
 Foi executado o commando:
 ``` Bash
 pyinstaller --onefile --paths .\venv\Lib\site-packages main.py
