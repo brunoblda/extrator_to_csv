@@ -2,7 +2,7 @@
 
 Transforma os arquivos gerados no extrator (.REF e .TXT) em arquivo .csv com o cabeçalho embutido.
 
-Também realiza a inclusão das colunas de orgao e matricula de acordo com a coluna GR-MATRICULA
+Realiza a inclusão das colunas de orgao e matricula do servidor de acordo com a coluna GR-MATRICULA e a inclusão das colunas de orgao, matricula do servidor e matricula do pensionista de acordo com a coluna GR-MATR-BENEF-PENSAO-SERVIDOR.
 
 ## 1.1 Forma de utilização
 
