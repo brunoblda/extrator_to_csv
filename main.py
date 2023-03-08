@@ -16,11 +16,18 @@ def heading_list_to_text(list_heading):
 def dict_rows(list_heading, list_data):
     """ Cria o dicionario para inclusão dos dados e do header do arquivo csv"""
     list_rows = []
+    float_data = []
+    for heading_element in list_heading:
+        if "-VA-" in heading_element:
+            float_data.append(heading_element)
     for data_row in list_data:
         data_row_list = data_row[0].split(",")
         dict_row = {}
         for iteration, data_row in enumerate(data_row_list):
-            dict_row[list_heading[iteration]] = data_row
+            if list_heading[iteration] in float_data:
+                dict_row[list_heading[iteration]] = float(data_row)/100
+            else:
+                dict_row[list_heading[iteration]] = data_row
         list_rows.append(dict_row)
     return list_rows
 
@@ -28,15 +35,33 @@ def separate_orgao_matricula(rows_list):
     """ Cria as colunas de orgao e matricula a partir da coluna GR-MATRICULA"""
     row_test = rows_list[0]
     headings_new = []
-    heading_matricula = 'GR-MATRICULA'
-    if heading_matricula in row_test:
-        headings_new.append('ORGAO')
-        headings_new.append('MATRICULA')
+    # Separa orgao e servidor
+    headings_new_serv = []
+    heading_matricula_serv = 'GR-MATRICULA'
+    if heading_matricula_serv in row_test:
+        headings_new_serv.append('ORGAO_SERV')
+        headings_new_serv.append('MATRICULA_SERV')
         for data_row in rows_list:
-            data_row[headings_new[0]] = data_row.get(
-                heading_matricula)[:5]
-            data_row[headings_new[1]] = data_row.get(
-                heading_matricula)[5:]
+            data_row[headings_new_serv[0]] = data_row.get(
+                heading_matricula_serv)[:5]
+            data_row[headings_new_serv[1]] = data_row.get(
+                heading_matricula_serv)[5:]
+    # Separa orgao, servidor e pensionista
+    headings_new_pens = []
+    heading_matricula_pens = 'GR-MATR-BENEF-PENSAO-SERVIDOR'
+    if heading_matricula_pens in row_test:
+        headings_new_pens.append('ORGAO_SERV_PENS')
+        headings_new_pens.append('MATRICULA_SERV_PENS')
+        headings_new_pens.append('MATRICULA_PENS')
+        for data_row in rows_list:
+            data_row[headings_new_pens[0]] = data_row.get(
+                heading_matricula_pens)[:5]
+            data_row[headings_new_pens[1]] = data_row.get(
+                heading_matricula_pens)[5:12]
+            data_row[headings_new_pens[2]] = data_row.get(
+                heading_matricula_pens)[12:]
+    headings_new.extend(headings_new_serv)
+    headings_new.extend(headings_new_pens)
     return (headings_new, rows_list)
 
 directory = os.getcwd()
@@ -85,7 +110,14 @@ for file_name in extrator_files_set:
         CHAR_INDEX = 0
         for i in range(len(chars_count)-1):
             char_count = chars_count[i]
-            CHAR_INDEX += int(char_count) + PLUS
+            # Verifica a um indicativo de float 09,2
+            if char_count.isdigit():
+                CHAR_INDEX += int(char_count) + PLUS
+            else:
+                list_char_count = char_count.split(",")
+                char_count_intern = int(list_char_count[0]) + int(list_char_count[1])
+                CHAR_INDEX += int(char_count_intern) + PLUS
+
             line = insert_in_a_string(line, ",", CHAR_INDEX)
             PLUS = 1
         line = [line]
@@ -94,7 +126,7 @@ for file_name in extrator_files_set:
     with open(file_name + ".csv", "w", encoding="utf8", newline="") as result_file:
         rows = dict_rows(headings, lines_csv)
         (extend_heading, org_mat_rows) = separate_orgao_matricula(rows)
-        headings[1:1] = extend_heading
+        headings[0:0] = extend_heading
         fieldnames = headings
         writer = csv.DictWriter(result_file, fieldnames=fieldnames)
         writer.writeheader()
