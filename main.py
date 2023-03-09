@@ -64,71 +64,73 @@ def separate_orgao_matricula(rows_list):
     headings_new.extend(headings_new_pens)
     return (headings_new, rows_list)
 
-directory = os.getcwd()
+if __name__ == '__main__':
 
-onlyfiles = [f for f in listdir(directory) if isfile(join(directory, f))]
+    directory = os.getcwd()
 
-name_files = []
+    onlyfiles = [f for f in listdir(directory) if isfile(join(directory, f))]
 
-for file in onlyfiles:
-    full_name_list = file.split(".")
-    name = full_name_list[0]
-    name_files.append(name)
+    name_files = []
 
-extrator_files = []
+    for file in onlyfiles:
+        full_name_list = file.split(".")
+        name = full_name_list[0]
+        name_files.append(name)
 
-for file in name_files:
-    if name_files.count(file) == 2:
-        extrator_files.append(file)
+    extrator_files = []
 
-# set é o nome em ingles de conjunto (elementos não se repetem)
-set_extrator_files = set(extrator_files)
+    for file in name_files:
+        if name_files.count(file) == 2:
+            extrator_files.append(file)
 
-extrator_files_set = list(set_extrator_files)
+    # set é o nome em ingles de conjunto (elementos não se repetem)
+    set_extrator_files = set(extrator_files)
 
-for file_name in extrator_files_set:
-    file_REF = directory+"\\"+file_name+'.REF'
-    file_TXT = directory+"\\"+file_name+'.TXT'
-    chars_count = []
-    headings = []
+    extrator_files_set = list(set_extrator_files)
 
-    with open(file_REF, encoding="utf8") as f:
-        for line in f:
-            char_count = line[-4:]
-            chars_count.append(char_count.strip())
-            heading = line[:40]
-            headings.append(heading.strip())
-    lines = []
+    for file_name in extrator_files_set:
+        file_REF = directory+"\\"+file_name+'.REF'
+        file_TXT = directory+"\\"+file_name+'.TXT'
+        chars_count = []
+        headings = []
 
-    with open(file_TXT, encoding="utf8") as f:
-        for line in f:
-            lines.append(line.strip())
-    lines_csv = []
+        with open(file_REF, encoding="utf8") as f:
+            for line in f:
+                char_count = line[-4:]
+                chars_count.append(char_count.strip())
+                heading = line[:40]
+                headings.append(heading.strip())
+        lines = []
 
-    for line in lines:
-        PLUS = 0
-        CHAR_INDEX = 0
-        for i in range(len(chars_count)-1):
-            char_count = chars_count[i]
-            # Verifica a um indicativo de float 09,2
-            if char_count.isdigit():
-                CHAR_INDEX += int(char_count) + PLUS
-            else:
-                list_char_count = char_count.split(",")
-                char_count_intern = int(list_char_count[0]) + int(list_char_count[1])
-                CHAR_INDEX += int(char_count_intern) + PLUS
+        with open(file_TXT, encoding="utf8") as f:
+            for line in f:
+                lines.append(line.strip())
+        lines_csv = []
 
-            line = insert_in_a_string(line, ",", CHAR_INDEX)
-            PLUS = 1
-        line = [line]
-        lines_csv.append(line)
+        for line in lines:
+            PLUS = 0
+            CHAR_INDEX = 0
+            for i in range(len(chars_count)-1):
+                char_count = chars_count[i]
+                # Verifica a um indicativo de float 09,2
+                if char_count.isdigit():
+                    CHAR_INDEX += int(char_count) + PLUS
+                else:
+                    list_char_count = char_count.split(",")
+                    char_count_intern = int(list_char_count[0]) + int(list_char_count[1])
+                    CHAR_INDEX += int(char_count_intern) + PLUS
 
-    with open(file_name + ".csv", "w", encoding="utf8", newline="") as result_file:
-        rows = dict_rows(headings, lines_csv)
-        (extend_heading, org_mat_rows) = separate_orgao_matricula(rows)
-        headings[0:0] = extend_heading
-        fieldnames = headings
-        writer = csv.DictWriter(result_file, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in org_mat_rows:
-            writer.writerow(row)
+                line = insert_in_a_string(line, ",", CHAR_INDEX)
+                PLUS = 1
+            line = [line]
+            lines_csv.append(line)
+
+        with open(file_name + ".csv", "w", encoding="utf8", newline="") as result_file:
+            rows = dict_rows(headings, lines_csv)
+            (extend_heading, org_mat_rows) = separate_orgao_matricula(rows)
+            headings[0:0] = extend_heading
+            fieldnames = headings
+            writer = csv.DictWriter(result_file, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in org_mat_rows:
+                writer.writerow(row)
